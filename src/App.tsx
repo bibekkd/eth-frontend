@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useAccount, useConnect, useDisconnect, WagmiProvider } from 'wagmi';
 import { config } from './config';
 import './App.css'
+import { useReadContract } from 'wagmi'
 
 
 const queryClient = new QueryClient();
@@ -12,9 +13,52 @@ function App() {
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
         <ConnectWallet />
+        <TotalSupply />
       </QueryClientProvider>
     </WagmiProvider>
   )
+}
+
+function TotalSupply() {
+  const { address } = useAccount();
+
+  const { data, isLoading, error } = useReadContract({
+    address: '0xdac17f958d2ee523a2206206994597c13d831ec7',
+    abi: [
+      {
+        "constant":true,
+        "inputs":[
+          {
+            "name":"who",
+            "type":"address"
+          }
+        ],
+        "name":"balanceOf",
+        "outputs":[
+          {
+            "name":"",
+            "type":"uint256"
+          }
+        ],
+        "payable":false,
+        "stateMutability":"view",
+        "type":"function"
+      }
+    ],
+    functionName:"balanceOf",
+    args: [address!]
+  })
+
+  if(isLoading) {
+    return <div>loading...</div>
+  }
+
+  return (
+    <div>
+        Total supply  - {JSON.stringify(data?.toString())}
+    </div>
+  )
+
 }
 
 function ConnectWallet() {
