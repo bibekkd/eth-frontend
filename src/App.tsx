@@ -3,8 +3,9 @@ import { useAccount, useConnect, useDisconnect, WagmiProvider } from 'wagmi';
 import { config } from './config';
 import './App.css'
 import { useReadContract } from 'wagmi'
+import { AllowUSDT } from './AllowUSDT';
 
-
+// 1.25.49
 const queryClient = new QueryClient();
 
 function App() {
@@ -14,9 +15,17 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <ConnectWallet />
         <TotalSupply />
+        <AllowUSDT />
       </QueryClientProvider>
     </WagmiProvider>
   )
+}
+
+function Account() {
+  const { address } = useAccount();
+  return <div>
+    {address ? "You are connected "+address : "You are disconnected"}
+  </div>
 }
 
 function TotalSupply() {
@@ -85,3 +94,5 @@ function ConnectWallet() {
 }
 
 export default App
+
+
